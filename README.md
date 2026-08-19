@@ -1,38 +1,39 @@
 # Playwright Quality Portfolio
 
-[![Playwright Tests](https://github.com/raphaelmanzolli/playwright-toolshop-automatio/actions/workflows/playwright.yml/badge.svg)](https://github.com/raphaelmanzolli/playwright-toolshop-automatio/actions/workflows/playwright.yml)
+[![Playwright Tests](https://github.com/raphaelmanzolli/playwright-toolshop-automation/actions/workflows/playwright.yml/badge.svg)](https://github.com/raphaelmanzolli/playwright-toolshop-automation/actions/workflows/playwright.yml)
 
-Portfólio de automação para o e-commerce educacional
-[Practice Software Testing (Toolshop)](https://practicesoftwaretesting.com/). O mesmo produto
-oferece [frontend e API REST documentada](https://api.practicesoftwaretesting.com/api/documentation),
-permitindo demonstrar testes de UI, API e integração com Playwright e TypeScript.
+Test automation portfolio for the
+[Practice Software Testing (Toolshop)](https://practicesoftwaretesting.com/) educational
+e-commerce platform. The application provides both a frontend and a
+[documented REST API](https://api.practicesoftwaretesting.com/api/documentation), enabling UI,
+API, and integration testing with Playwright and TypeScript.
 
-## O que este projeto demonstra
+## What this project demonstrates
 
-- frontend em Chromium, Firefox, WebKit e viewport mobile;
-- API REST com validações de status, headers e contrato básico;
-- cenário integrado que compara dados da API com o frontend;
-- arquitetura separada em `locators`, `functions` e `tests`;
+- frontend testing on Chromium, Firefox, WebKit, and a mobile viewport;
+- REST API testing with status, header, and contract validations;
+- an integration scenario that compares API data with the frontend;
+- a layered architecture separating locators, functions, steps, and scenarios;
 - executable scenarios written in English with Gherkin;
-- fixtures tipadas e TypeScript em modo estrito;
-- tags de execução, paralelismo e pipeline no GitHub Actions;
-- HTML, JUnit, trace, vídeo e screenshot para diagnóstico.
+- typed fixtures and TypeScript strict mode;
+- execution tags, parallelism, and a GitHub Actions pipeline;
+- HTML and JUnit reports, traces, videos, and screenshots for troubleshooting.
 
-## Cenários automatizados
+## Automated scenarios
 
-| Camada     | Cenário                                  | Tag                        |
-| ---------- | ---------------------------------------- | -------------------------- |
-| Frontend   | pesquisa pelo nome                       | `@front @smoke`            |
-| Frontend   | ordenação pelo menor preço               | `@front @regression`       |
-| Frontend   | detalhes do produto                      | `@front @smoke`            |
-| API        | listagem e contrato de produtos          | `@api @smoke`              |
-| API        | consulta por ID                          | `@api @regression`         |
-| API        | produto inexistente retorna 404          | `@api @negative`           |
-| Integração | nome e preço consistentes entre API e UI | `@integration @regression` |
+| Layer       | Scenario                                                 | Tags                       |
+| ----------- | -------------------------------------------------------- | -------------------------- |
+| Frontend    | search for a product by name                             | `@front @smoke`            |
+| Frontend    | sort products by lowest price                            | `@front @regression`       |
+| Frontend    | view product details                                     | `@front @smoke`            |
+| API         | validate the product list and its contract               | `@api @smoke`              |
+| API         | retrieve a product by ID                                 | `@api @regression`         |
+| API         | return 404 for a nonexistent product                     | `@api @negative`           |
+| Integration | keep product name and price consistent across API and UI | `@integration @regression` |
 
-## Como executar
+## Getting started
 
-Pré-requisito: Node.js 20 ou superior.
+Prerequisite: Node.js 20 or later.
 
 ```bash
 corepack enable
@@ -42,51 +43,58 @@ cp .env.example .env
 pnpm test
 ```
 
-No Windows PowerShell, use `Copy-Item .env.example .env` no lugar de `cp`.
+On Windows PowerShell, use `Copy-Item .env.example .env` instead of `cp`.
+
+## Available commands
 
 ```bash
-pnpm test:front       # somente frontend
-pnpm test:api         # somente API, sem abrir navegador
-pnpm test:integration # integração API + UI
-pnpm test:smoke       # feedback rápido
-pnpm test:regression  # suíte ampliada
-pnpm test:ui          # interface interativa
-pnpm report           # relatório HTML
-pnpm check            # todas as verificações
+pnpm test:front       # frontend scenarios only
+pnpm test:api         # API scenarios only, without launching a browser
+pnpm test:integration # API and frontend integration scenarios
+pnpm test:smoke       # fast feedback suite
+pnpm test:regression  # extended regression suite
+pnpm test:ui          # Playwright interactive mode
+pnpm report           # open the HTML report
+pnpm check            # run every local quality check
 ```
 
-## Arquitetura
+## Architecture
 
 ```text
-features/       # business scenarios written in English with Gherkin
-steps/          # implementation of Given, When and Then steps
+features/       # business scenarios written in Gherkin
+steps/          # implementation of Given, When, and Then steps
 src/
-├── locators/   # somente mapeamento dos elementos da interface
-├── functions/  # ações de negócio e clientes HTTP reutilizáveis
-├── fixtures/   # injeção tipada e estado isolado de cada cenário
-└── types/      # contratos TypeScript da API
+├── locators/   # UI element mappings only
+├── functions/  # reusable business actions and HTTP clients
+├── fixtures/   # typed dependency injection and isolated scenario state
+└── types/      # TypeScript contracts for API responses
 ```
 
-Essa separação deixa os testes legíveis e reduz manutenção: a regra de negócio fica em
-`features`; a automação das frases fica em `steps`; uma mudança de seletor fica em `locators`;
-e uma mudança de fluxo fica em `functions`. A pasta `.features-gen` é gerada automaticamente
-antes dos testes e não é versionada.
+This separation keeps the scenarios readable and reduces maintenance costs. Business rules
+live in `features`; sentence automation lives in `steps`; selector changes stay in `locators`;
+and workflow changes stay in `functions`.
 
-## CI e diagnóstico de falhas
+The `.features-gen` directory is generated automatically before test execution and is not
+committed to the repository.
 
-A cada push ou pull request para `main`, a CI valida tipos, lint e formatação e executa todos
-os projetos. O relatório HTML fica disponível como artefato por 14 dias. Em uma repetição de
-falha, o Playwright coleta trace; falhas também preservam screenshot e vídeo.
+## CI and failure diagnostics
 
-## Decisões importantes
+Every push or pull request to `main` triggers the GitHub Actions pipeline. It validates types,
+linting, and formatting before running all test projects. The HTML report is retained as an
+artifact for 14 days. Playwright collects a trace on retries and preserves screenshots and
+videos for failed tests.
 
-- A suíte usa `data-test` e asserções web-first, sem sleeps fixos.
-- Testes de API são executados uma vez no projeto `api`, sem custo de browsers duplicados.
-- O cenário integrado usa um produto retornado dinamicamente pela API, evitando ID fixo.
-- URLs podem ser sobrescritas no `.env` para apontar a outro ambiente.
-- A estratégia orientada a risco está em [`docs/TEST-STRATEGY.md`](docs/TEST-STRATEGY.md).
+## Key decisions
+
+- The suite uses `data-test` selectors and web-first assertions, with no fixed sleeps.
+- API tests run once in the dedicated `api` project instead of being duplicated per browser.
+- The integration scenario dynamically selects a product returned by the API, avoiding a
+  fixed product ID.
+- Environment URLs can be overridden through `.env`.
+- The risk-based approach is documented in
+  [`docs/TEST-STRATEGY.md`](docs/TEST-STRATEGY.md).
 
 ---
 
-Feito para demonstrar raciocínio de Quality Engineering, manutenibilidade e confiança no
-pipeline — não apenas quantidade de casos automatizados.
+Built to demonstrate Quality Engineering reasoning, maintainability, and confidence in the
+delivery pipeline—not just the number of automated test cases.
